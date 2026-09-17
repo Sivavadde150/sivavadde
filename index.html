@@ -14,7 +14,9 @@
 .content{padding:34px 42px 42px}.section{margin-top:28px}.section:first-child{margin-top:0}.section-title{display:flex;align-items:center;gap:12px;font-size:22px;margin:0 0 15px}.section-title:after{content:'';height:1px;flex:1;background:var(--line)}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.item{padding:15px 17px;border:1px solid var(--line);border-radius:16px;background:var(--card)}.label{font-family:Arial,sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}.value{font-size:16px}.highlight{border-color:#d7c1ad;background:#fbf1e7}.highlight .value{font-weight:700;color:#754b30}
 .family{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.family .item{min-height:105px}.contact{display:flex;flex-wrap:wrap;gap:12px}.contact a{display:inline-flex;align-items:center;padding:12px 15px;border:1px solid var(--line);border-radius:14px;text-decoration:none;color:var(--ink);background:#fff}.contact a:hover{border-color:#cdb39e}.note{margin-top:28px;padding:21px;border-radius:18px;background:var(--soft);text-align:center;font-style:italic;color:#604b3b}.footer{padding:20px 42px 28px;text-align:center;color:var(--muted);font-family:Arial,sans-serif;font-size:12px;border-top:1px solid var(--line)}
-@media(max-width:700px){.page{margin:0 auto;padding:10px}.card{border-radius:20px}.hero{padding:42px 20px 28px}.content{padding:25px 20px 30px}.footer{padding:18px 20px 24px}h1{font-size:37px}.grid,.family{grid-template-columns:1fr}.hero:before,.hero:after{top:22px;font-size:16px}.hero-actions{margin-top:20px}}
+/* Photo gallery */
+.gallery{position:relative;border:1px solid var(--line);border-radius:22px;background:#f5eee6;padding:14px;overflow:hidden}.gallery-frame{position:relative;height:520px;border-radius:16px;overflow:hidden;background:#2c2723;display:flex;align-items:center;justify-content:center}.gallery-frame img{width:100%;height:100%;object-fit:cover;display:block}.gallery-empty{color:#fff;text-align:center;padding:30px;font-family:Arial,sans-serif}.gallery-empty strong{display:block;font-size:18px;margin-bottom:8px}.gallery-empty span{font-size:13px;opacity:.82}.gallery-btn{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.88);color:#4d3829;font-size:25px;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.18)}.gallery-btn:hover{background:#fff}.gallery-btn.prev{left:24px}.gallery-btn.next{right:24px}.gallery-caption{padding:12px 4px 2px;text-align:center;font-family:Arial,sans-serif;font-size:13px;color:var(--muted)}.gallery-dots{display:flex;justify-content:center;gap:7px;margin-top:10px}.gallery-dot{width:8px;height:8px;border:0;border-radius:50%;background:#c9b8a7;padding:0;cursor:pointer}.gallery-dot.active{background:var(--accent);transform:scale(1.25)}.gallery-help{margin-top:10px;text-align:center;font-family:Arial,sans-serif;font-size:12px;color:var(--muted)}.gallery-help a{color:var(--accent);font-weight:700}
+@media(max-width:700px){.page{margin:0 auto;padding:10px}.card{border-radius:20px}.hero{padding:42px 20px 28px}.content{padding:25px 20px 30px}.footer{padding:18px 20px 24px}h1{font-size:37px}.grid,.family{grid-template-columns:1fr}.hero:before,.hero:after{top:22px;font-size:16px}.hero-actions{margin-top:20px}.gallery-frame{height:420px}.gallery-btn{width:40px;height:40px}.gallery-btn.prev{left:12px}.gallery-btn.next{right:12px}}
 </style>
 </head>
 <body>
@@ -35,6 +37,15 @@
 <div class="item"><div class="label">Experience</div><div class="value">4.5 Years in IT / Application Engineer</div></div>
 <div class="item highlight"><div class="label">Annual Package</div><div class="value">₹8.0 LPA</div></div>
 </div></section>
+<section class="section"><h2 class="section-title">Photo Gallery</h2>
+<div class="gallery">
+<div class="gallery-frame" id="galleryFrame"><div class="gallery-empty"><strong>Your Photos</strong><span>Add your image URLs in the galleryImages array below.</span></div></div>
+<button class="gallery-btn prev" type="button" aria-label="Previous photo" onclick="changePhoto(-1)">‹</button>
+<button class="gallery-btn next" type="button" aria-label="Next photo" onclick="changePhoto(1)">›</button>
+<div class="gallery-caption" id="galleryCaption">Photo gallery</div>
+<div class="gallery-dots" id="galleryDots"></div>
+<div class="gallery-help">For Google Photos, use the individual image's direct image URL. A normal Google Photos sharing/album link opens the Google Photos page but cannot reliably be displayed as an <code>&lt;img&gt;</code> in a GitHub Pages site.</div>
+</div></section>
 <section class="section"><h2 class="section-title">Family Details</h2><div class="family">
 <div class="item"><div class="label">Father</div><div class="value">Mr. Ramanjineyulu Vadde<br><span class="tag">Farmer</span></div></div>
 <div class="item"><div class="label">Mother</div><div class="value">Mrs. Rathnamma<br><span class="tag">Homemaker</span></div></div>
@@ -46,4 +57,31 @@
 </div></section>
 <div class="note">Seeking a compatible life partner with mutual respect, understanding and family values.</div>
 </section><footer class="footer">© Sivaiah Vadde • Marriage Biodata</footer>
-</article></main></body></html>
+</article></main>
+<script>
+/* Replace these with direct image URLs when you have them. */
+const galleryImages = [
+  // 'https://example.com/photo1.jpg',
+  // 'https://example.com/photo2.jpg',
+  // 'https://example.com/photo3.jpg'
+];
+let currentPhoto = 0;
+function renderGallery(){
+  const frame=document.getElementById('galleryFrame');
+  const caption=document.getElementById('galleryCaption');
+  const dots=document.getElementById('galleryDots');
+  if(!galleryImages.length){
+    frame.innerHTML='<div class="gallery-empty"><strong>Your Photos</strong><span>Add your image URLs in the <b>galleryImages</b> array in index.html.</span></div>';
+    caption.textContent='Photo gallery';
+    dots.innerHTML='';
+    return;
+  }
+  frame.innerHTML='<img src="'+galleryImages[currentPhoto]+'" alt="Sivaiah Vadde photo '+(currentPhoto+1)+'" loading="eager">';
+  caption.textContent='Photo '+(currentPhoto+1)+' of '+galleryImages.length;
+  dots.innerHTML=galleryImages.map((_,i)=>'<button class="gallery-dot '+(i===currentPhoto?'active':'')+'" type="button" aria-label="Go to photo '+(i+1)+'" onclick="goToPhoto('+i+')"></button>').join('');
+}
+function changePhoto(direction){if(!galleryImages.length)return;currentPhoto=(currentPhoto+direction+galleryImages.length)%galleryImages.length;renderGallery();}
+function goToPhoto(index){currentPhoto=index;renderGallery();}
+renderGallery();
+</script>
+</body></html>
