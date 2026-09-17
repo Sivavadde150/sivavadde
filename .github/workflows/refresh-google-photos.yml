@@ -1,0 +1,62 @@
+name: Refresh Google Photos Gallery
+
+on:
+  push:
+    paths-ignore:
+      - gallery.json
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-gallery:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.18.0'
+
+      - name: Fetch Google Photos album images
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-save @marcus5914/google-photos-album-image-url-fetch
+          node --input-type=module <<'NODE'
+          import { fetchImageUrls } from '@marcus5914/google-photos-album-image-url-fetch';
+          import fs from 'node:fs';
+
+          const albumUrl = 'https://photos.app.goo.gl/6njD3Hy1uFqqukVo9';
+          const items = await fetchImageUrls(albumUrl);
+
+          if (!items || !items.length) {
+            throw new Error('No media items were found in the Google Photos album.');
+          }
+
+          const images = items
+            .filter(item => !item.isVideo && item.posterUrl)
+            .map(item => `${item.posterUrl}=w1400-h1400`);
+
+          fs.writeFileSync(
+            'gallery.json',
+            JSON.stringify({
+              source: albumUrl,
+              updatedAt: new Date().toISOString(),
+              images
+            }, null, 2) + '\n'
+          );
+
+          console.log(`Found ${images.length} photos.`);
+          NODE
+
+      - name: Commit refreshed gallery
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add gallery.json
+          git diff --cached --quiet || (git commit -m 'Refresh Google Photos gallery' && git push)
