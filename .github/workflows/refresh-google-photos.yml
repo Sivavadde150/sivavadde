@@ -5,7 +5,7 @@ on:
     paths-ignore:
       - gallery.json
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
